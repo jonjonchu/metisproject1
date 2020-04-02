@@ -6,6 +6,7 @@ MTA turnstiles data for use in pandas
 '''
 
 import pandas as pd
+import numpy as np
 
 def get_data(week_nums):
     '''
@@ -31,6 +32,7 @@ def processTurnstiles(df):
     Returns: pandas DataFrame
     '''
     weekdays = ['MON','TUE','WED','THU','FRI','SAT','SUN']
+    bins = [-1,3,7,11,15,19,24] #use a negative number at the beginning to ensure we do not lose midnight
     
     df.reset_index(inplace=True)
     df.drop(columns='index', inplace=True)
@@ -40,6 +42,10 @@ def processTurnstiles(df):
     df['DATE'] = pd.to_datetime(df['DATE'])
     # Add weekday column. DOF = "day of week"
     df['DOF'] = [weekdays[df['DATETIME'][1].weekday()] for dstring in df.DATE.tolist()]
+    
+    # Add bins to organize entires by Hour of Day (HOD)
+    df['HOD'] = [r.hour for r in df.TIMESTAMP] #hod = "hour of day"
+    df['HODBIN'] = pd.cut(df['HOD'], bins)
     
     # Drop dupes
     df = df.drop_duplicates()
