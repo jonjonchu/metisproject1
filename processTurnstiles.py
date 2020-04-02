@@ -40,11 +40,12 @@ def processTurnstiles(df):
     # Convert Date and Time to Datetime objects
     df['DATETIME']= pd.to_datetime(  df['DATE'] +' '+ df['TIME'] )
     df['DATE'] = pd.to_datetime(df['DATE'])
+    
     # Add weekday column. DOF = "day of week"
     df['DOF'] = [weekdays[df['DATETIME'][1].weekday()] for dstring in df.DATE.tolist()]
     
     # Add bins to organize entires by Hour of Day (HOD)
-    df['HOD'] = [r.hour for r in df.['DATETIME'] #hod = "hour of day"
+    df['HOD'] = [r.hour for r in df['DATETIME']] #hod = "hour of day"
     df['HODBIN'] = pd.cut(df['HOD'], bins)
     
     # Drop dupes
