@@ -33,7 +33,7 @@ def processTurnstiles(df):
     Returns: pandas DataFrame
     '''
     
-    weekdays = ['MON','TUE','WED','THU','FRI','SAT','SUN']
+    #weekdays = ['MON','TUE','WED','THU','FRI','SAT','SUN']
     bins = [-1,3,7,11,15,19,24] #use a negative number at the beginning to ensure we do not lose midnight
     
     df.reset_index(inplace=True)
@@ -44,7 +44,7 @@ def processTurnstiles(df):
     df['DATE'] = pd.to_datetime(df['DATE'])
     
     # Add weekday column. DOF = "day of week"
-    df['DAY_OF_WEEK'] = [weekdays[dstring.weekday()] for dstring in df.DATE.tolist()]
+    df['DAY_OF_WEEK'] = [dstring.weekday() for dstring in df.DATE.tolist()]
     df['WEEKDAY'] = df["DAY_OF_WEEK"].apply(lambda x: False if (x == 'SAT') | (x == 'SUN') else True)
 
     # Add bins to organize entries by Hour of Day (HOD)
