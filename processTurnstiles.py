@@ -7,6 +7,7 @@ MTA turnstiles data for use in pandas
 
 import pandas as pd
 import numpy as np
+import datetime
 
 def get_data(week_nums):
     '''
@@ -31,6 +32,7 @@ def processTurnstiles(df):
     
     Returns: pandas DataFrame
     '''
+    
     weekdays = ['MON','TUE','WED','THU','FRI','SAT','SUN']
     bins = [-1,3,7,11,15,19,24] #use a negative number at the beginning to ensure we do not lose midnight
     
@@ -42,9 +44,10 @@ def processTurnstiles(df):
     df['DATE'] = pd.to_datetime(df['DATE'])
     
     # Add weekday column. DOF = "day of week"
-    df['DOF'] = [weekdays[df['DATETIME'][1].weekday()] for dstring in df.DATE.tolist()]
-    
-    # Add bins to organize entires by Hour of Day (HOD)
+    df['DAY_OF_WEEK'] = [weekdays[dstring.weekday()] for dstring in df.DATE.tolist()]
+    df['WEEKDAY'] = df["DAY_OF_WEEK"].apply(lambda x: False if (x == 'SAT') | (x == 'SUN') else True)
+
+    # Add bins to organize entries by Hour of Day (HOD)
     df['HOD'] = [r.hour for r in df['DATETIME']] #hod = "hour of day"
     df['HODBIN'] = pd.cut(df['HOD'], bins)
     
@@ -87,3 +90,19 @@ def readProcessedData(path):
     df['DATETIME']= pd.to_datetime(  df['DATETIME'] )
     df['DATE'] = pd.to_datetime(df['DATE'])
     return df
+
+def weekday_num(date):
+    '''
+    Takes in date and returns weekday number
+    '''
+    return date.weekday()
+
+def weekday_str(date):
+    '''
+    takes in date and returns day of the week in string form
+    '''
+    ## 2019/06/01 = 5 (Sat)
+    ## 1 = Tuesday
+    ## 0 = Monday
+    weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    return weekdays[weekday_num(date)]
